@@ -1,4 +1,3 @@
-
 /* A GameSprite Object
 * A common parent object for game entities that need
 * position x, y
@@ -19,17 +18,49 @@ GameSprite.prototype.render = function(){
   ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
-// Enemies our player must avoid
-var Enemy = function() {
-  // Variables applied to each of our instances go here,
-  // we've provided one for you to get started
-    GameSprite.call(this, "images/enemy-bug.png" );
 
-    //assign a random multiplier for the speed of the enemy.
-    this.velocity = getRandomIntInclusive(100, 402);
 
-    //Reset will place an enemy back at x=0 in a random row.
-    this.reset();
+/*
+* Gem gamesprite and functions
+*/
+var Gem = function(){
+  var gemImages = ['images/gem-blue.png','images/gem-green.png','images/gem-orange.png'];
+  var sprite = gemImages[getRandomIntInclusive(0,2)];
+  console.log(sprite);
+  GameSprite.call(this, sprite);
+
+  this.reset();
+
+};
+Gem.prototype = Object.create(GameSprite.prototype);
+Gem.prototype.constructor = GameSprite;
+Gem.prototype.reset = function(){
+  //Generate a valid random x coordinate on the field
+  var xCoordinate = getRandomIntInclusive(0,4) * 101;
+  //Generate a valid random y coordinate on the field
+  var yCoordinate = getRandomIntInclusive(1,3) * 83;
+  //make sure they aren't overlapping with another gem
+
+  //Do a wait so there is a delay in it reappearing
+
+  //render
+  this.x = xCoordinate;
+  this.y = yCoordinate;
+};
+
+
+/*
+* Enemy gamesprite and functions
+*/
+var Enemy = function(){
+
+  GameSprite.call(this, "images/enemy-bug.png" );
+
+  //assign a random multiplier for the speed of the enemy.
+  this.velocity = getRandomIntInclusive(100, 402);
+
+  //Reset will place an enemy back at x=0 in a random row.
+  this.reset();
 
 };
 
@@ -66,10 +97,7 @@ Enemy.prototype.update = function(dt){
 // Creates players and functions to handle the aspects of player
 var Player = function(){
   //Load player sprite image
-  GameSprite.call(this, "images/char-princess-girl.png");
-  var img = Resources.get(this.sprite);
-  console.log(img);
-
+  GameSprite.call(this, "images/char-boy.png");
   this.reset();
 
 };
@@ -103,7 +131,10 @@ Player.prototype.reset = function(){
   this.y = 400;
 
 };
-
+//Function that adds current position with movement
+Player.prototype.nextMove = function(current, diff){
+ return current + diff;
+};
 Player.prototype.update = function(){
 
   //Check direction of movement in the x direction
@@ -137,37 +168,40 @@ Player.prototype.update = function(){
   this.render();
 };
 
-//Function that adds current position with movement
-Player.prototype.nextMove = function(current, diff){
-  return current + diff;
-};
-// Now instantiate your objects.
+/*
+* Instantiate game objects.
+*/
+//Create some gems
+var allGems = [new Gem(), new Gem(), new Gem()];
+
 // Place all enemy objects in an array called allEnemies
 var allEnemies = [new Enemy(), new Enemy(), new Enemy()];
 
 // Place the player object in a variable called player
 var player = new Player();
 
+
+
+
 //Checks for Collisions and updates entities accordingly
 //This includes the edges.
 var checkCollisions = function(){
-
-  console.log("Check Collisions");
   //check the position of each enemy compared to the player to see if they occupy the same space.
   allEnemies.forEach(function(enemy) {
-    /*To Do
-    * Check to see if ranges intersect at all with other objects to detect collisions
-    */
-
     //Check collision with enemies
     //Check if the right most corner of an enemy is over the left most corner of the player
-      if((enemy.x+101 > player.x+50 && enemy.x < player.x+50) ){
-        //Check if y cordinates overlap - Player between y+70 y+140 ; enemy y+80 y+145
-        if((enemy.y+80 >= player.y+70) && (enemy.y+145 <= player.y+140)){
-            player.reset();
-        }
-
-      };
+    if((enemy.x+101 > player.x+50 && enemy.x < player.x+50) ){
+      //Check if y cordinates overlap - Player between y+70 y+140 ; enemy y+80 y+145
+      if((enemy.y+80 >= player.y+70) && (enemy.y+145 <= player.y+140)){
+          player.reset();
+      }
+    };
+    //Check for collision with gems
+    /*
+    * TO DO:
+    * Create gem gamesprite objects
+    * Create collection of gems
+    */
   });
 };
 

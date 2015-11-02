@@ -25,6 +25,7 @@ var Engine = (function(global) {
         ctx = canvas.getContext('2d'),
         lastTime;
 
+
     canvas.width = 505;
     canvas.height = 606;
     doc.body.appendChild(canvas);
@@ -56,7 +57,11 @@ var Engine = (function(global) {
         /* Use the browser's requestAnimationFrame function to call this
          * function again as soon as the browser is able to draw another frame.
          */
-        win.requestAnimationFrame(main);
+         if(gameState == 'gameOver'){
+           init();
+         }else{
+           win.requestAnimationFrame(main);
+         }
     }
 
     /* This function does some initial setup that should only occur once,
@@ -66,9 +71,34 @@ var Engine = (function(global) {
     function init() {
         reset();
         lastTime = Date.now();
-        main();
+
+
+
     }
 
+function avatarSelection(){
+
+  avatarPicker.update();
+  avatarPicker.render();
+  if(avatarPicker.sprite != ""){
+    player.sprite = avatarPicker.sprite;
+    global.gameState = 'inPlay';
+    init();
+  }else{
+    win.requestAnimationFrame(avatarSelection);
+  }
+
+}
+function gameOver(){
+  gameOverScreen.render();
+  if(gameState == 'new'){
+    init();
+
+  }else{
+    win.requestAnimationFrame(gameOver);
+  }
+
+}
     /* This function is called by main (our game loop) and itself calls all
      * of the functions which may need to update entity's data. Based on how
      * you implement your collision detection (when two entities occupy the
@@ -104,6 +134,10 @@ var Engine = (function(global) {
      * they are just drawing the entire screen over and over.
      */
     function render() {
+
+        //clear old board
+         ctx.clearRect(0, 0, canvas.width, canvas.height);
+
         /* This array holds the relative URL to the image used
          * for that particular row of the game level.
          */
@@ -159,6 +193,10 @@ var Engine = (function(global) {
 
         //Render player
         player.render();
+        //Render Score;
+        scorekeeper.render();
+        //Render Life
+        healthKeeper.render();
 
     }
 
@@ -168,6 +206,31 @@ var Engine = (function(global) {
      */
     function reset() {
         // noop
+        console.log("Game Init called - status: "+gameState);
+        switch (gameState){
+          case "new": {
+            console.log("Game Reset");
+            avatarSelection();
+            break;
+          };
+
+          case "inPlay" :{
+            console.log("Starting Game");
+            main();
+            break;
+          };
+          case "gameOver" :{
+            console.log("Gameover");
+            gameOver();
+            break;
+          };
+
+          default:{
+            ("Other call to game reset: "+gameState);
+            break;
+          }
+
+        };
     }
 
     /* Go ahead and load all of the images we know we're going to need to
@@ -182,7 +245,14 @@ var Engine = (function(global) {
         'images/char-boy.png',
         'images/gem-blue.png',
         'images/gem-green.png',
-        'images/gem-orange.png'
+        'images/gem-orange.png',
+        'images/heart.png',
+        'images/char-boy.png',
+        'images/char-cat-girl.png',
+        'images/char-horn-girl.png',
+        'images/char-pink-girl.png',
+        'images/char-princess-girl.png',
+        'images/selector.png'
 
     ]);
     Resources.onReady(init);

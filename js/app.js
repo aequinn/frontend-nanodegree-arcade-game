@@ -10,8 +10,8 @@ var GameSprite = function(sprite){
   this.moveX = 0;
   this.moveY = 0;
   this.sprite = sprite;
-  this.width;
-  this.height;
+  this.width = 0;
+  this.height = 0;
 };
 
 GameSprite.prototype.render = function(){
@@ -19,15 +19,96 @@ GameSprite.prototype.render = function(){
 };
 
 
+//Gameover Object
+var GameOverScreen = function(){
 
+};
+GameOverScreen.prototype.render = function(){
+  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  ctx.fillStyle = "hsla(259, 4%, 25%, 0.5)";
+  ctx.fillRect(0, 100, 505, 230);
+
+  ctx.font = "normal 60px "+gameFont+", sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillStyle = "#ffffff";
+  ctx.fillText("GAME OVER", 505/2, (171/2+100));
+  ctx.fillText("Score: "+scorekeeper.currentScore, 505/2, (171/2+170));
+  ctx.font = "normal 20px "+gameFont+", sans-serif";
+  ctx.fillText("Press 'ENTER' to play again.", 505/2, (171/2+210));
+};
+GameOverScreen.prototype.handleInput = function(input){
+  switch (input){
+    case "enter":
+      gameState = 'new';
+      avatarPicker.sprite = "";
+      break;
+  }
+};
+// method to create an option to create an avatar at the beginning of the game
+var AvatarPicker = function(){
+  this.sprite = "";
+  this.avatarImages = [
+          'images/char-boy.png',
+          'images/char-cat-girl.png',
+          'images/char-horn-girl.png',
+          'images/char-pink-girl.png',
+          'images/char-princess-girl.png'
+  ];
+  this.selectorSprite = 'images/selector.png';
+  this.selectorX = 0;
+  this.selectorY = 100;
+};
+
+AvatarPicker.prototype.render = function(){
+  ctx.fillStyle = "green";
+  ctx.fillRect(0, 100, 505, 280);
+
+  //Draw selector highligher next
+  ctx.drawImage(Resources.get(this.selectorSprite), this.selectorX, this.selectorY);
+
+  //loop through avatars and display all
+  for(i=0; i < this.avatarImages.length; i++){
+    ctx.drawImage(Resources.get(this.avatarImages[i]), i*101, 100);
+  };
+  ctx.font = "normal 20px "+gameFont+", sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillStyle = "#EEF296";
+  ctx.fillText("Navigate using <- and -> arrows.", 505/2, 310);
+  ctx.fillText("Select an avatar and begin with 'ENTER'.", 505/2, 350);
+
+
+};
+AvatarPicker.prototype.handleInput = function(input){
+  //dependingon movement direction set a move cordinate.
+  switch (input){
+    case "left":
+      if(this.selectorX-101 >= 0){
+        this.selectorX += -101;
+      }
+      break;
+    case "right":
+      if(this.selectorX+101 <= 404){
+        this.selectorX += 101;
+      }
+      break;
+    case "enter":
+      this.sprite = this.avatarImages[this.selectorX/101];
+      break;
+  }
+  this.update();
+};
+AvatarPicker.prototype.update = function(){
+  ctx.drawImage(Resources.get(this.selectorSprite), this.selectorX, this.selectorY);
+};
 /*
-* Gem gamesprite and functions
+* Gem gamesprites and functions
 */
 var Gem = function(){
-  var gemImages = ['images/gem-blue.png','images/gem-green.png','images/gem-orange.png'];
-  var sprite = gemImages[getRandomIntInclusive(0,2)];
-  console.log(sprite);
-  GameSprite.call(this, sprite);
+  var gems = [['images/gem-blue.png',150],['images/gem-green.png',100],['images/gem-orange.png',50]];
+  var gem = gems[getRandomIntInclusive(0,2)];
+
+  GameSprite.call(this, gem[0]);
+  this.value = gem[1];
 
   this.reset();
 
@@ -46,8 +127,44 @@ Gem.prototype.reset = function(){
   //render
   this.x = xCoordinate;
   this.y = yCoordinate;
+  this.width = 101*0.75;
+  this.height = 171*0.70;
+};
+Gem.prototype.render = function(){
+  ctx.drawImage(Resources.get(this.sprite), this.x+13, this.y+13, this.width, this.height);
+};
+Gem.prototype.clear = function(){
+  this.x = -100;
+  this.y = -100;
+  this.render();
 };
 
+/*
+* @Description scorekeeper object
+*/
+var ScoreKeeper = function(){
+  GameSprite.call(this, "");
+  this.currentScore = 0;
+  this.topScore = 0;
+  this.x = 0;
+  this.y = 0;
+  this.reset();
+};
+ScoreKeeper.prototype = Object.create(GameSprite.prototype);
+ScoreKeeper.prototype.constructor = GameSprite;
+ScoreKeeper.prototype.reset = function() {
+  this.x = 303;
+  this.y = 40;
+};
+ScoreKeeper.prototype.render = function() {
+  ctx.font = "normal 18px "+gameFont+", sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillStyle = "#222";
+  ctx.fillText("Score: "+this.currentScore, ctx.canvas.clientWidth/2, 40);
+};
+ScoreKeeper.prototype.update = function(points) {
+    this.currentScore += points;
+};
 
 /*
 * Enemy gamesprite and functions
@@ -55,10 +172,6 @@ Gem.prototype.reset = function(){
 var Enemy = function(){
 
   GameSprite.call(this, "images/enemy-bug.png" );
-
-  //assign a random multiplier for the speed of the enemy.
-  this.velocity = getRandomIntInclusive(100, 402);
-
   //Reset will place an enemy back at x=0 in a random row.
   this.reset();
 
@@ -66,13 +179,15 @@ var Enemy = function(){
 
 Enemy.prototype = Object.create(GameSprite.prototype);
 Enemy.prototype.constructor = GameSprite;
-Enemy.prototype.reset = function(loc){
+Enemy.prototype.reset = function(){
 
   //Set the three y cordinates where an enemy can begin
   // about 83 spaces apart
   var startOptions = [60,143, 226];
   //Get a random start location between 0 and 2
   var rand = getRandomIntInclusive(0, 2);
+  //assign a random multiplier for the speed of the enemy.
+  this.velocity = getRandomIntInclusive(100, 502);
   //Set X cordinate to negative the velocity. This will keep it from looking like it jumps the first time
   this.x =  this.velocity*-1;
   //Get the random start row
@@ -87,12 +202,40 @@ Enemy.prototype.update = function(dt){
   this.x = this.x + this.velocity * dt;
   if(this.x >= 601){
     this.reset();
-  };
+  }
 
   this.render();
 
 };
 
+/*
+* Health tracker
+*/
+var HealthKeeper = function(){
+  GameSprite.call(this, "images/heart.png");
+  this.reset();
+};
+
+HealthKeeper.prototype = Object.create(GameSprite.prototype);
+HealthKeeper.prototype.constructor = GameSprite;
+//render
+HealthKeeper.prototype.render = function(){
+  ctx.fillText("Health: ",375, 40);
+  for(i=this.health; i >= 0; i--){
+    ctx.drawImage(Resources.get(this.sprite), 480-(i*101*.25), 12, 101*.25, 171*.25);
+  };
+};
+//update health
+HealthKeeper.prototype.hit = function(){
+  this.health = this.health - 1;
+  if(this.health < 0){
+    gameState = 'gameOver';
+  }
+};
+
+HealthKeeper.prototype.reset = function(){
+  this.health = 3;
+};
 // Player Class and functions
 // Creates players and functions to handle the aspects of player
 var Player = function(){
@@ -121,7 +264,7 @@ Player.prototype.handleInput = function(input){
     case "right":
       this.moveX = 101;
       break;
-  };
+  }
   this.update();
 };
 // Move player back to initial starting point
@@ -138,7 +281,7 @@ Player.prototype.nextMove = function(current, diff){
 Player.prototype.update = function(){
 
   //Check direction of movement in the x direction
-  if(this.moveX != 0 ){
+  if(this.moveX !== 0 ){
     //Check if moving off vertical boundary of the game board
     if(this.nextMove(this.moveX, this.x)>500 || this.nextMove(this.moveX, this.x)<-5 ){
       this.moveX = 0;
@@ -146,11 +289,11 @@ Player.prototype.update = function(){
       //Update X movement
       this.x = this.nextMove(this.x, this.moveX);
       this.moveX = 0;
-    };
-  };
+    }
+  }
 
   //Check direction of movement in the y direction
-  if(this.moveY != 0){
+  if(this.moveY !== 0){
     //check if we will move past the bottom border, don't move if we do.
     if(this.nextMove(this.y, this.moveY) >400){
       this.moveY = 0;
@@ -162,8 +305,8 @@ Player.prototype.update = function(){
       //If we are in bounds, Update Y movement
       this.y = this.nextMove(this.y, this.moveY);
       this.moveY = 0;
-    };
-  };
+    }
+  }
 
   this.render();
 };
@@ -171,6 +314,13 @@ Player.prototype.update = function(){
 /*
 * Instantiate game objects.
 */
+//set a gameState variable to track different states of the game
+var gameFont = "Montserrat";
+var gameState = "new";
+
+//Creaet an avatarPicker
+var avatarPicker = new AvatarPicker();
+
 //Create some gems
 var allGems = [new Gem(), new Gem(), new Gem()];
 
@@ -179,13 +329,25 @@ var allEnemies = [new Enemy(), new Enemy(), new Enemy()];
 
 // Place the player object in a variable called player
 var player = new Player();
+var scorekeeper = new ScoreKeeper();
+var healthKeeper = new HealthKeeper();
+var gameOverScreen = new GameOverScreen();
 
-
-
-
-//Checks for Collisions and updates entities accordingly
-//This includes the edges.
+//Checks for Collisions with other Sprites and gameboard edges then updates entities accordingly
 var checkCollisions = function(){
+
+  allGems.forEach(function(gem){
+    if((gem.x+gem.width+15 > player.x+50) && (gem.x+15 < player.x+50)){
+      if((gem.y+60 >= player.y+70) && (gem.y+108 <= player.y+140)){
+        scorekeeper.currentScore += gem.value;
+        gem.clear();
+        setTimeout(function () {
+          gem.reset();
+        }, 3000);
+      }
+    }
+  });
+
   //check the position of each enemy compared to the player to see if they occupy the same space.
   allEnemies.forEach(function(enemy) {
     //Check collision with enemies
@@ -193,15 +355,11 @@ var checkCollisions = function(){
     if((enemy.x+101 > player.x+50 && enemy.x < player.x+50) ){
       //Check if y cordinates overlap - Player between y+70 y+140 ; enemy y+80 y+145
       if((enemy.y+80 >= player.y+70) && (enemy.y+145 <= player.y+140)){
+          healthKeeper.hit();
           player.reset();
       }
-    };
-    //Check for collision with gems
-    /*
-    * TO DO:
-    * Create gem gamesprite objects
-    * Create collection of gems
-    */
+    }
+
   });
 };
 
@@ -209,18 +367,27 @@ var checkCollisions = function(){
 // Player.handleInput() method. You don't need to modify this.
 document.addEventListener('keyup', function(e) {
     var allowedKeys = {
+        13: 'enter',
         37: 'left',
         38: 'up',
         39: 'right',
         40: 'down'
     };
+if(gameState == 'new'){
+  avatarPicker.handleInput(allowedKeys[e.keyCode]);
+}else if(gameState == 'gameOver'){
+  gameOverScreen.handleInput(allowedKeys[e.keyCode]);
+}else{
+  player.handleInput(allowedKeys[e.keyCode]);
+}
 
-    player.handleInput(allowedKeys[e.keyCode]);
 });
 
 // Returns a random integer between min (included) and max (included)
 // Using Math.round() will give you a non-uniform distribution!
-// Using from MDN to generate random starting row for Enemies.
+// Using from MDN to generate random whole numbers for several aspects of the game.
+// Starting position for enemies & gems
+// Velocity for enemies
 function getRandomIntInclusive(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+};

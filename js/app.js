@@ -6,17 +6,17 @@
 * update function- apply changes to object
 */
 var AvatarPicker = function() {
-  this.sprite = "";
-  this.avatarImages = ["images/char-boy.png", "images/char-cat-girl.png",
-  "images/char-horn-girl.png", "images/char-pink-girl.png",
-  "images/char-princess-girl.png"
+  this.sprite = '';
+  this.avatarImages = ['images/char-boy.png', 'images/char-cat-girl.png',
+  'images/char-horn-girl.png', 'images/char-pink-girl.png',
+  'images/char-princess-girl.png'
 ];
-this.selectorSprite = "images/selector.png";
+this.selectorSprite = 'images/selector.png';
 this.selectorX = 0;
 this.selectorY = 100;
 };
 AvatarPicker.prototype.render = function() {
-  ctx.fillStyle = "green";
+  ctx.fillStyle = 'green';
   ctx.fillRect(0, 100, 505, 280);
   //Draw selector highligher next
   ctx.drawImage(Resources.get(this.selectorSprite), this.selectorX, this.selectorY);
@@ -25,26 +25,26 @@ AvatarPicker.prototype.render = function() {
     ctx.drawImage(Resources.get(this.avatarImages[i]), i * 101, 100);
   }
   //Render text for instructions
-  ctx.font = "normal 20px " + gameFont + ", sans-serif";
-  ctx.textAlign = "center";
-  ctx.fillStyle = "#eeF296";
-  ctx.fillText("Navigate using <- and -> arrows.", 505 / 2, 310);
-  ctx.fillText("Select an avatar and begin with 'ENTER'.", 505 / 2, 350);
+  ctx.font = 'normal 20px ' + gameFont + ', sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#eeF296';
+  ctx.fillText('Navigate using <- and -> arrows.', 505 / 2, 310);
+  ctx.fillText('Select an avatar and begin with \'ENTER\'.', 505 / 2, 350);
 };
 AvatarPicker.prototype.handleInput = function(input) {
   //Take appropriate action depending on input from the keyboard
   switch (input) {
-    case "left":
+    case 'left':
     if (this.selectorX - 101 >= 0) {
       this.selectorX += -101;
     }
     break;
-    case "right":
+    case 'right':
     if (this.selectorX + 101 <= 404) {
       this.selectorX += 101;
     }
     break;
-    case "enter":
+    case 'enter':
     this.sprite = this.avatarImages[this.selectorX / 101];
     break;
   }
@@ -62,11 +62,11 @@ AvatarPicker.prototype.update = function() {
 * reset function - Resets health for new game
 */
 var HealthKeeper = function() {
-  GameSprite.call(this, "images/heart.png");
+  GameSprite.call(this, 'images/heart.png');
   this.reset();
 };
 HealthKeeper.prototype.render = function() {
-  ctx.fillText("Health: ", 375, 40);
+  ctx.fillText('Health: ', 375, 40);
   for (var i = this.health; i >= 0; i--) {
     ctx.drawImage(Resources.get(this.sprite), 480 - (i * 101 * 0.25), 12,
     101 * 0.25, 171 * 0.25);
@@ -75,7 +75,7 @@ HealthKeeper.prototype.render = function() {
 HealthKeeper.prototype.hit = function() {
   this.health = this.health - 1;
   if (this.health < 0) {
-    gameState = "gameOver";
+    gameState = 'gameOver';
     this.reset();
   }
 };
@@ -91,7 +91,7 @@ HealthKeeper.prototype.reset = function() {
 * reset function- Resets score to 0
 */
 var ScoreKeeper = function() {
-  GameSprite.call(this, "");
+  GameSprite.call(this, '');
   this.currentScore = 0;
   this.topScore = 0;
   this.x = 0;
@@ -104,10 +104,10 @@ ScoreKeeper.prototype.reset = function() {
   this.currentScore = 0;
 };
 ScoreKeeper.prototype.render = function() {
-  ctx.font = "normal 18px " + gameFont + ", sans-serif";
-  ctx.textAlign = "center";
-  ctx.fillStyle = "#222";
-  ctx.fillText("Score: " + this.currentScore, ctx.canvas.clientWidth / 2,
+  ctx.font = 'normal 18px ' + gameFont + ', sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#222';
+  ctx.fillText('Score: ' + this.currentScore, ctx.canvas.clientWidth / 2,
   40);
 };
 ScoreKeeper.prototype.update = function(points) {
@@ -138,9 +138,9 @@ GameSprite.prototype.render = function() {
 */
 var Gem = function() {
   var gems = [
-    ["images/gem-blue.png", 150],
-    ["images/gem-green.png", 100],
-    ["images/gem-orange.png", 50]
+    ['images/gem-blue.png', 150],
+    ['images/gem-green.png', 100],
+    ['images/gem-orange.png', 50]
   ];
   var gem = gems[getRandomIntInclusive(0, 2)];
   GameSprite.call(this, gem[0]);
@@ -182,7 +182,7 @@ Gem.prototype.clear = function() {
 * update function - update movement of enemy
 */
 var Enemy = function() {
-  GameSprite.call(this, "images/enemy-bug.png");
+  GameSprite.call(this, 'images/enemy-bug.png');
   //Reset will place an enemy back at x=0 in a random row.
   this.reset();
 };
@@ -220,7 +220,7 @@ Enemy.prototype.update = function(dt) {
 */
 var Player = function() {
   //Load player sprite image
-  GameSprite.call(this, "images/char-boy.png");
+  GameSprite.call(this, 'images/char-boy.png');
   this.reset();
 };
 Player.prototype = Object.create(GameSprite.prototype);
@@ -228,16 +228,16 @@ Player.prototype.constructor = GameSprite;
 Player.prototype.handleInput = function(input) {
   //depending on movement direction set a move cordinate.
   switch (input) {
-    case "up":
+    case 'up':
     this.moveY = -83;
     break;
-    case "down":
+    case 'down':
     this.moveY = 83;
     break;
-    case "left":
+    case 'left':
     this.moveX = -101;
     break;
-    case "right":
+    case 'right':
     this.moveX = 101;
     break;
   }
@@ -280,112 +280,103 @@ Player.prototype.update = function() {
         this.moveY = 0;
       }
     }
-    this.render();
+  this.render();
+};
+
+/*
+* Object for the end of game state.
+* Methods
+* render function- Render final score and instructions
+* handleInput function- Take appropriate action for input.
+*/
+var GameOverScreen = function() {};
+GameOverScreen.prototype.render = function() {
+  //Create background canvas
+  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  ctx.fillStyle = 'hsla(259, 4%, 25%, 0.5)';
+  //Add Text
+  ctx.fillRect(0, 100, 505, 230);
+  ctx.font = 'normal 60px ' + gameFont + ', sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#ffffff';
+  ctx.fillText('GAME OVER', 505 / 2, (171 / 2 + 100));
+  ctx.fillText('Score: ' + scoreKeeper.currentScore, 505 / 2, (171 / 2 +
+  170));
+  ctx.font = 'normal 20px ' + gameFont + ', sans-serif';
+  ctx.fillText('Press \'ENTER\' to play again.', 505 / 2, (171 / 2 + 210));
+};
+GameOverScreen.prototype.handleInput = function(input) {
+  switch (input) {
+    case 'enter':
+      gameState = 'new';
+      avatarPicker.sprite = '';
+      scoreKeeper.reset();
+      break;
+  }
+};
+
+/*
+* Instantiate some variables and objects to be used in the game
+*/
+//set a gameState variable to track different states of the game
+var gameFont = 'Montserrat';
+var gameState = 'new';
+//Creaet an avatarPicker
+var avatarPicker = new AvatarPicker();
+//Create some gems
+var allGems = [new Gem(), new Gem(), new Gem()];
+// Place all enemy objects in an array called allEnemies
+var allEnemies = [new Enemy(), new Enemy(), new Enemy()];
+// Place the player object in a variable called player
+var player = new Player();
+// Create objects for tracking in the game
+var scoreKeeper = new ScoreKeeper();
+var healthKeeper = new HealthKeeper();
+var gameOverScreen = new GameOverScreen();
+
+//Checks for Collisions with other Sprites then updates entities accordingly
+var checkCollisions = function() {
+  allGems.forEach(function(gem) {
+    //Check to make sure none of the area of the player overlap the area of a gem
+    if (((gem.x + gem.width + 15 > player.x + 50) && (gem.x + 15 < player.x + 50)) && ((gem.y + 60 >= player.y + 70) && (gem.y + 108 <= player.y + 140))) {
+      scoreKeeper.currentScore += gem.value;
+      gem.clear();
+      //delay the reappearance of gems
+      setTimeout(function() {gem.reset();}, 3000);
+    }
+  });
+  //check the position of each enemy compared to the player to see if they occupy the same space.
+  allEnemies.forEach(function(enemy) {
+    //Check if the right most corner of an enemy is over the left most corner of the player && Check if y cordinates overlap - Player between y+70 y+140 ; enemy y+80 y+145
+    if (((enemy.x + 101 > player.x + 50 && enemy.x < player.x + 50)) && ((enemy.y + 80 >= player.y + 70) && (enemy.y + 145 <= player.y + 140))) {
+      healthKeeper.hit();
+      player.reset();
+    }
+  });
+};
+
+// This listens for key presses and sends the keys to the appropriate object
+// depending on the state you are in.
+document.addEventListener('keyup', function(e) {
+  var allowedKeys = {
+    13: 'enter',
+    37: 'left',
+    38: 'up',
+    39: 'right',
+    40: 'down'
   };
-
-  /*
-  * Object for the end of game state.
-  * Methods
-  * render function- Render final score and instructions
-  * handleInput function- Take appropriate action for input.
-  */
-  var GameOverScreen = function() {};
-  GameOverScreen.prototype.render = function() {
-    //Create background canvas
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    ctx.fillStyle = "hsla(259, 4%, 25%, 0.5)";
-    //Add Text
-    ctx.fillRect(0, 100, 505, 230);
-    ctx.font = "normal 60px " + gameFont + ", sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillStyle = "#ffffff";
-    ctx.fillText("GAME OVER", 505 / 2, (171 / 2 + 100));
-    ctx.fillText("Score: " + scorekeeper.currentScore, 505 / 2, (171 / 2 +
-      170));
-      ctx.font = "normal 20px " + gameFont + ", sans-serif";
-      ctx.fillText("Press 'ENTER' to play again.", 505 / 2, (171 / 2 + 210));
-    };
-    GameOverScreen.prototype.handleInput = function(input) {
-      switch (input) {
-        case "enter":
-        gameState = "new";
-        avatarPicker.sprite = "";
-        scorekeeper.reset();
-        break;
-      }
-    };
-
-    /*
-    * Instantiate some variables and objects to be used in the game
-    */
-    //set a gameState variable to track different states of the game
-    var gameFont = "Montserrat";
-    var gameState = "new";
-    //Creaet an avatarPicker
-    var avatarPicker = new AvatarPicker();
-    //Create some gems
-    var allGems = [new Gem(), new Gem(), new Gem()];
-    // Place all enemy objects in an array called allEnemies
-    var allEnemies = [new Enemy(), new Enemy(), new Enemy()];
-    // Place the player object in a variable called player
-    var player = new Player();
-    // Create objects for tracking in the game
-    var scorekeeper = new ScoreKeeper();
-    var healthKeeper = new HealthKeeper();
-    var gameOverScreen = new GameOverScreen();
-
-    //Checks for Collisions with other Sprites then updates entities accordingly
-    var checkCollisions = function() {
-      allGems.forEach(function(gem) {
-        //Check to make sure none of the area of the player overlap the area of a gem
-        if ((gem.x + gem.width + 15 > player.x + 50) && (gem.x + 15 <
-          player.x + 50)) {
-            if ((gem.y + 60 >= player.y + 70) && (gem.y + 108 <=
-              player.y + 140)) {
-                scorekeeper.currentScore += gem.value;
-                gem.clear();
-                setTimeout(function() {
-                  gem.reset();
-                }, 3000);
-              }
-            }
-          });
-          //check the position of each enemy compared to the player to see if they occupy the same space.
-          allEnemies.forEach(function(enemy) {
-            //Check if the right most corner of an enemy is over the left most corner of the player
-            if ((enemy.x + 101 > player.x + 50 && enemy.x < player.x +
-              50)) {
-                //Check if y cordinates overlap - Player between y+70 y+140 ; enemy y+80 y+145
-                if ((enemy.y + 80 >= player.y + 70) && (enemy.y + 145 <=
-                  player.y + 140)) {
-                    healthKeeper.hit();
-                    player.reset();
-                  }
-                }
-              });
-            };
-            // This listens for key presses and sends the keys to the appropriate object
-            // depending on the state you are in.
-            document.addEventListener("keyup", function(e) {
-              var allowedKeys = {
-                13: "enter",
-                37: "left",
-                38: "up",
-                39: "right",
-                40: "down"
-              };
-              if (gameState == "new") {
-                avatarPicker.handleInput(allowedKeys[e.keyCode]);
-              } else if (gameState == "gameOver") {
-                gameOverScreen.handleInput(allowedKeys[e.keyCode]);
-              } else {
-                player.handleInput(allowedKeys[e.keyCode]);
-              }
-            });
-            // Returns a random integer between min (included) and max (included)
-            // Using Math.round() will give you a non-uniform distribution!
-            // Using from MDN to generate random whole numbers for several aspects of the game.
-            // Starting position for enemies & gems, Velocity for enemies, etc...
-            function getRandomIntInclusive(min, max) {
-              return Math.floor(Math.random() * (max - min + 1)) + min;
-            }
+  if (gameState == 'new') {
+    avatarPicker.handleInput(allowedKeys[e.keyCode]);
+  } else if (gameState == 'gameOver') {
+    gameOverScreen.handleInput(allowedKeys[e.keyCode]);
+  } else {
+    player.handleInput(allowedKeys[e.keyCode]);
+  }
+});
+// Returns a random integer between min (included) and max (included)
+// Using Math.round() will give you a non-uniform distribution!
+// Using from MDN to generate random whole numbers for several aspects of the game.
+// Starting position for enemies & gems, Velocity for enemies, etc...
+function getRandomIntInclusive(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}

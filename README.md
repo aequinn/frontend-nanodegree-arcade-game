@@ -1,3 +1,5 @@
+Last Updated: Nov. 8, 2015
+
 frontend-nanodegree-arcade-game
 ===============================
 This is a simple arcade game, like frogger, that requires the user to dodge
@@ -21,4 +23,4 @@ In the game you can use the 'up', 'down', 'left', and 'right' keys to move the
 character around the screen. Collect gems to push your score higher. Watch out
 for enemies and the water, these will take away a life point.
 
-At the end of the game press your score will show. Use 'Enter' key to begin again.
+At the end of the game your score will show. Use 'Enter' key to begin again.

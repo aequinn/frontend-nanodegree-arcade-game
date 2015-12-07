@@ -13,7 +13,7 @@ var AvatarPicker = function() {
   'images/char-horn-girl.png', 'images/char-pink-girl.png',
   'images/char-princess-girl.png'
 ];
-this.selectorSprite = 'images/selector.png';
+this.selectorSprite = 'images/Selector.png';
 this.selectorX = 0;
 this.selectorY = 100;
 };

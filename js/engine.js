@@ -230,7 +230,7 @@ Resources.load(['images/stone-block.png', 'images/water-block.png',
 'images/Heart.png', 'images/char-boy.png',
 'images/char-cat-girl.png', 'images/char-horn-girl.png',
 'images/char-pink-girl.png',
-'images/char-princess-girl.png', 'images/selector.png'
+'images/char-princess-girl.png', 'images/Selector.png'
 ]);
 Resources.onReady(init);
 /* Assign the canvas' context object to the global variable (the window

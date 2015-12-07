@@ -59,7 +59,7 @@ AvatarPicker.prototype.update = function() {
 * Methods included
 * render function- Display heart(s) for the amount of health
 * hit function- Remove a health
-* reset function - Resets health for new game
+* reset function - Resets health for new game. Update health here for more or less
 */
 var HealthKeeper = function() {
   GameSprite.call(this, 'images/heart.png');

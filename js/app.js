@@ -64,7 +64,7 @@ AvatarPicker.prototype.update = function() {
 * reset function - Resets health for new game. Update health here for more or less
 */
 var HealthKeeper = function() {
-  GameSprite.call(this, 'images/heart.png');
+  GameSprite.call(this, 'images/Heart.png');
   this.reset();
 };
 HealthKeeper.prototype.render = function() {

@@ -1,3 +1,5 @@
+/* global ctx */
+/* global Resources */
 /*
 * Object for picking an avatar character at the beginning of a game.
 * Methods
